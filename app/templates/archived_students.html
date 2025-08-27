@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Élèves Archivés</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .student-name {
+            font-size: 18px;
+        }
+        button {
+             cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Élèves Archivés</h1>
+        
+        <a href="{{ url_for('app_routes.students') }}">
+            <button style="background-color: #2196F3; color: white;">🔙 Retour à la liste principale</button>
+        </a>
+
+        <hr style="margin: 20px 0;">
+
+        <ul>
+            {% for student in archived_students %}
+                <li>
+                    <span class="student-name">{{ student.name }}</span>
+                    <form action="{{ url_for('app_routes.unarchive_student', student_id=student.id) }}" method="POST">
+                        <button type="submit" style="background-color: #4CAF50; color: white;">✅ Restaurer</button>
+                    </form>
+                </li>
+            {% else %}
+                <li>Aucun élève n'est actuellement archivé.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

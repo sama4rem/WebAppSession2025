@@ -1,0 +1,37 @@
+/* Style général */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+	background-repeat: repeat;
+    background-image: url('Background.jpg');
+    background-size: cover; /* Adjusts the image to cover the entire page */
+    background-position: center; /* Centers the image */
+     /* Prevents the image from repeating */
+}
+
+h1 {
+    text-align: center;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin: 10px 0;
+}
+
+strong {
+    cursor: pointer;
+}
+
+button {
+    cursor: pointer;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+}

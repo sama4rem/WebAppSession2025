@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+    <title>Remarques pour {{ student_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='remarks.css') }}">
+=======
+    <title>Remarques</title>
+    <link rel="stylesheet" href="../static/remarks.css">
+    <script>
+        function saveSelection(studentId) {
+            const checkboxes = document.querySelectorAll('input[name="selected_sessions"]:checked');
+            const formData = new FormData();
+            checkboxes.forEach(checkbox => {
+                formData.append('selected_sessions', checkbox.value);
+            });
+            fetch(`/save_selection/${studentId}`, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert("Une erreur s'est produite lors de la sauvegarde.");
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert("Une erreur s'est produite lors de la sauvegarde.");
+            });
+        }
+
+        function toggleInfoForm() {
+            const form = document.getElementById('info-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function toggleEditRemarkForm(sessionId) {
+            const form = document.getElementById('edit-form-' + sessionId);
+            form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+        }
+    </script>
+>>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+<<<<<<< HEAD
+            font-family: 'Arial', sans-serif;
+=======
+            font-family: Arial, sans-serif;
+>>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
+        }
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+        .non-enregistree {
+            color: red;
+            font-weight: bold;
+        }
+        .remark-container {
+            display: flex;
+            align-items: center;
+<<<<<<< HEAD
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        /* Style pour le panneau d'informations */
+        #info-panel {
+            display: none;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+        }
+        #info-panel h4 {
+            margin-top: 0;
+=======
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+>>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
+        }
+    </style>
+</head>
+<body>
+<<<<<<< HEAD
+    <!-- HEADER -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px;">
+        <h1>🗒️ Séances de l'élève : {{ student_name }}</h1>
+        <a href="{{ url_for('app_routes.students') }}">
+            <button style="background-color: #2196F3; color: white;">🔙 Retour</button>
+        </a>
+    </div>
+
+    <!-- BOUTONS D'ACTION -->
+    <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <button onclick="toggleInfoPanel()">ℹ️ Informations & Agenda</button>
+        <a href="https://wa.me/{{ '212' + student_phone_number[1:] if student_phone_number and student_phone_number.startswith('06') else student_phone_number }}" target="_blank">
+            <button style="background-color: #25D366; color: white;">💬 WhatsApp</button>
+        </a>
+        <form action="{{ url_for('app_routes.archive_student', student_id=student_id) }}" method="POST">
+             <button type="submit" style="background-color: #ff9800; color: white;">🗄️ Archiver l'élève</button>
+        </form>
+        <form action="{{ url_for('app_routes.delete_student', student_id=student_id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élève et toutes ses données ?');">
+            <button type="submit" style="background-color: red; color: white;">🗑️ Supprimer l'élève</button>
+        </form>
+    </div>
+
+    <!-- PANNEAU D'INFORMATIONS ET AGENDA (Caché par défaut) -->
+    <div id="info-panel">
+        <form action="{{ url_for('app_routes.update_info', student_id=student_id) }}" method="POST">
+            <h4>📝 Mettre à jour les infos de l'élève</h4>
+            <input type="text" name="school_name" placeholder="🏫 Nom de l'école" value="{{ student_school or '' }}">
+            <input type="date" name="birth_date" value="{{ student_birth_date or '' }}">
+            <input type="tel" name="phone_number" placeholder="📞 Numéro de téléphone" value="{{ student_phone_number or '' }}">
+            <button type="submit">💾 Enregistrer les infos</button>
+        </form>
+        <hr style="margin: 20px 0;">
+        <div>
+            <h4>📅 Ajouter une séance à Google Agenda</h4>
+            <label for="session-datetime">Date et heure de la séance :</label>
+            <input type="datetime-local" id="session-datetime" style="padding: 8px;">
+            <label for="session-duration">Durée (en minutes) :</label>
+            <input type="number" id="session-duration" value="90" style="width: 60px; padding: 8px;">
+            <button type="button" id="add-to-google-calendar-btn" style="background-color: #fbbc05; color: black;">
+                Ajouter à Google Agenda
+            </button>
+        </div>
+    </div>
+
+    <!-- FORMULAIRE POUR AJOUTER UNE REMARQUE -->
+    <div style="text-align: center; margin-top: 20px;">
+        <form action="{{ url_for('app_routes.remarks', student_id=student_id) }}" method="POST">
+            <textarea name="remark" placeholder="✏️ Saisir une remarque" style="width: 80%; height: 100px;" required></textarea>
+            <br><br>
+            <button type="submit" style="background-color: #2196F3; color: white;">➕ Ajouter la séance</button>
+        </form>
+    </div>
+
+    <!-- BOUTON PROGRAMME -->
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('app_routes.programme_maths', student_id=student_id) }}">
+            <button type="button" style="background-color: #4CAF50; color: white;">📘 Programme Maths 2 BAC</button>
+        </a>
+    </div>
+
+    <!-- DÉBUT DE LA SECTION SÉANCES -->
+    <div style="text-align: center; margin-top: 30px;">
+        <h2>🗂️ Séances enregistrées :</h2>
+        <button type="button" onclick="saveSelection({{ student_id }})" style="background-color: #FF9800; color: white; margin-bottom: 15px;">💾 Sauvegarder la sélection des séances</button>
+    </div>
+
+    <!-- LISTE DES REMARQUES -->
+    <ul>
+        {% for session in sessions %}
+            {% if session.id %}
+            <li class="remark-container">
+                <div style="flex: 1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <p style="margin: 5px;"><strong>📅 Date :</strong> {{ session.date.strftime('%Y-%m-%d') }}</p>
+                    <p style="margin: 5px;">
+                        <strong>📝 Contenu :</strong> {{ session.remark }}
+                        {% if not session.selected %}
+                            <span class="non-enregistree">⚠️ (Non enregistrée)</span>
+                        {% endif %}
+                    </p>
+                    <input type="checkbox" name="selected_sessions" value="{{ session.id }}" {% if session.id in selected_sessions %}checked{% endif %}>
+                    <button type="button" onclick="toggleEditRemarkForm({{ session.id }})" style="background-color: #FFC107; color: white;">✏️ Modifier</button>
+                    <form action="{{ url_for('app_routes.delete_remark', student_id=student_id, session_id=session.id) }}" method="POST" style="margin: 0;">
+                        <button type="submit" style="background-color: #f44336; color: white;">🗑️ Supprimer</button>
+                    </form>
+                </div>
+                <form id="edit-form-{{ session.id }}" action="{{ url_for('app_routes.edit_remark', student_id=student_id, session_id=session.id) }}" method="POST" style="display: none; margin-top: 10px; width: 100%;">
+                    <textarea name="remark" required style="width: 80%;">{{ session.remark }}</textarea>
+                    <button type="submit" style="background-color: #4CAF50; color: white;">💾 Sauvegarder</button>
+                </form>
+            </li>
+            {% endif %}
+        {% else %}
+            <li>Aucune séance enregistrée pour cet élève.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- ✅ DÉBUT DE LA SECTION MODIFIÉE -->
+    <!-- COMPTEURS DE SÉANCES -->
+    <div style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 16px; color: red;">
+            <strong>⚠️ Nombre des séances non enregistrées : {{ unrecorded_count }}</strong>
+        </p>
+        <p style="font-size: 16px; color: green;">
+            <strong>✅ Nombre des séances enregistrées : {{ recorded_count }}</strong>
+        </p>
+    </div>
+    <!-- ✅ FIN DE LA SECTION MODIFIÉE -->
+    
+    <!-- Script unifié à la fin du body -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sessionInput = document.getElementById('session-datetime');
+            const now = new Date();
+            now.setHours(15, 0, 0, 0); 
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const defaultValue = `${year}-${month}-${day}T${hours}:${minutes}`;
+            sessionInput.value = defaultValue;
+        });
+        function toggleInfoPanel() {
+            const panel = document.getElementById('info-panel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+        function saveSelection(studentId) {
+            const checkboxes = document.querySelectorAll('input[name="selected_sessions"]:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+            const formData = new FormData();
+            selectedIds.forEach(id => {
+                formData.append('selected_sessions', id);
+            });
+            fetch(`/save_selection/${studentId}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert("❌ Une erreur s'est produite lors de la sauvegarde.");
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert("❌ Une erreur de communication s'est produite.");
+            });
+        }
+        function toggleEditRemarkForm(sessionId) {
+            const form = document.getElementById('edit-form-' + sessionId);
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+        document.getElementById('add-to-google-calendar-btn').addEventListener('click', function() {
+            const studentName = "{{ student_name | e }}";
+            const sessionInput = document.getElementById('session-datetime');
+            const durationInput = document.getElementById('session-duration');
+            if (!sessionInput.value) {
+                alert("Veuillez choisir une date et une heure pour la séance.");
+                return;
+            }
+            const startDate = new Date(sessionInput.value);
+            const durationMinutes = parseInt(durationInput.value) || 90;
+            const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+            const formatDateForGoogle = (date) => {
+                return date.toISOString().replace(/-|:|\.\d{3}/g, '');
+            };
+            const googleStartDate = formatDateForGoogle(startDate);
+            const googleEndDate = formatDateForGoogle(endDate);
+            const eventTitle = encodeURIComponent(studentName);
+            const eventDetails = encodeURIComponent(`Séance de soutien scolaire pour ${studentName}.\nPlanifié depuis l'application de gestion.`);
+            const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${googleStartDate}/${googleEndDate}&details=${eventDetails}`;
+            window.open(googleCalendarUrl, '_blank');
+        });
+    </script>
+</body>
+</html>
+=======
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px;">
+        <h1>Séances de l'élève : {{ student_name }}</h1>
+        <a href="{{ url_for('app_routes.students') }}">
+            <button type="button" style="background-color: #2196F3; color: white;">Retour</button>
+        </a>
+        <button onclick="toggleInfoForm()">Informations</button>
+        <form id="info-form" style="display:none;" action="{{ url_for('app_routes.update_info', student_id=student_id) }}" method="POST">
+            <input type="text" name="school_name" placeholder="Nom de l'école" value="{{ student_school }}">
+            <input type="date" name="birth_date" value="{{ student_birth_date }}">
+            <input type="tel" name="phone_number" placeholder="Numéro de téléphone" value="{{ student_phone_number }}">
+            <button type="submit">Enregistrer</button>
+        </form>
+        <a href="https://wa.me/{{ '212' + student_phone_number[1:] if student_phone_number.startswith('06') else student_phone_number }}" target="_blank">
+            <button style="background-color: #25D366; color: white;">Ouvrir WhatsApp</button>
+        </a>
+        <form action="{{ url_for('app_routes.delete_student', student_id=student_id) }}" method="POST">
+            <button type="submit" style="background-color: red; color: white;">Supprimer l'élève</button>
+        </form>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <form action="{{ url_for('app_routes.remarks', student_id=student_id) }}" method="POST">
+            <textarea name="remark" placeholder="Saisir une remarque" style="width: 80%; height: 100px;"></textarea>
+            <br><br>
+            <button type="submit" style="background-color: #4CAF50; color: white;">Ajouter la séance</button>
+        </form>
+    </div>
+
+    <h2 style="text-align: center; margin-top: 30px;">Séances enregistrées :</h2>
+    <ul>
+        {% for session in sessions %}
+        <li class="remark-container">
+            <div style="flex: 1; display: flex; align-items: center; gap: 10px;">
+                <p><strong>Date :</strong> {{ session.date }}</p>
+                <p>
+                    <strong>Contenu :</strong> {{ session.remark }}
+                    {% if session.id in unrecorded_sessions %}
+                        <span class="non-enregistree">(Non enregistrée)</span>
+                    {% endif %}
+                </p>
+                <input type="checkbox" name="selected_sessions" value="{{ session.id }}" 
+                {% if session.id in selected_sessions %}checked{% endif %}>
+                <button type="button" onclick="toggleEditRemarkForm({{ session.id }})" style="background-color: #FFC107; color: white;">Modifier</button>
+                <form id="edit-form-{{ session.id }}" action="{{ url_for('app_routes.edit_remark', student_id=student_id, session_id=session.id) }}" method="POST" style="display: none;">
+                    <textarea name="remark" placeholder="Modifier la remarque">{{ session.remark }}</textarea>
+                    <br>
+                    <button type="submit" style="background-color: #4CAF50; color: white;">Sauvegarder</button>
+                </form>
+                <form action="{{ url_for('app_routes.delete_remark', student_id=student_id, session_id=session.id) }}" method="POST">
+                    <button type="submit" style="background-color: #f44336; color: white;">Supprimer</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button type="button" onclick="saveSelection({{ student_id }})" style="background-color: #FF9800; color: white;">Sauvegarder la sélection</button>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 16px; color: red;">
+            <strong>Nombre des séances non payées : {{ unrecorded_count }}</strong>
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('app_routes.students') }}">
+            <button type="button" style="background-color: #2196F3; color: white;">Retour à la page des élèves</button>
+        </a>
+    </div>
+</body>
+</html>
+>>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042

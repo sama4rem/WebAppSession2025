@@ -1,0 +1,57 @@
+Le numéro de série du volume est 0000029A 2E22:19B6
+C:.
+│   .dockerignore
+│   create_db.py
+│   data.json
+│   Dockerfile
+│   Procfile
+│   requirements.txt
+│   run.py
+│   structure.txt
+│
+├───app
+│   │   data.json
+│   │   models.py
+│   │   requirements.txt
+│   │   routes.py
+│   │   __init__.py
+│   │
+│   ├───static
+│   │       Background-laptop.jpg
+│   │       Background.jpg
+│   │       background.psd
+│   │       backgroundprogramme2bac.jpg
+│   │       backgroundremarks.jpg
+│   │       programme.css
+│   │       remarks.css
+│   │       style.css
+│   │
+│   ├───templates
+│   │       programme.html
+│   │       remarks.html
+│   │       students-laptop.html
+│   │       students.html
+│   │
+│   └───__pycache__
+│           models.cpython-313.pyc
+│           routes.cpython-313-laptop.pyc
+│           routes.cpython-313.pyc
+│           utils.cpython-313.pyc
+│           __init__.cpython-313.pyc
+│
+├───instance
+│       students_sessions.db
+│
+├───migrations
+│   │   alembic.ini
+│   │   env.py
+│   │   README
+│   │   script.py.mako
+│   │
+│   ├───versions
+│   │   └───__pycache__
+│   └───__pycache__
+│           env.cpython-313.pyc
+│
+└───__pycache__
+        run.cpython-313.pyc

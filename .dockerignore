@@ -1,0 +1,17 @@
+# Python Virtual Environment
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Local environment variables file
+.env
+
+# Git version control folder
+.git/
+.gitignore
+
+# IDE-specific settings (optional but good practice)
+.vscode/
+.idea/

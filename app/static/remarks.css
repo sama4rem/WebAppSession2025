@@ -1,0 +1,114 @@
+/* Style général */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+	background-repeat: repeat;
+<<<<<<< HEAD
+    background-image: url('backgroundremarks.jpg');
+=======
+    background-image: url('Background.jpg');
+>>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
+    background-size: cover; /* Adjusts the image to cover the entire page */
+    background-position: center; /* Centers the image */
+     /* Prevents the image from repeating */
+}
+
+/* En-tête */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+}
+
+/* Formulaire pour ajouter une remarque */
+#add-remark-form {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#add-remark-form textarea {
+    width: 80%;
+    height: 150px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+#add-remark-form button {
+    background-color: #4CAF50; /* Couleur verte comme dans la page des élèves */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#add-remark-form button:hover {
+    background-color: #45a049; /* Couleur survol */
+}
+
+/* Liste des remarques */
+h2 {
+    text-align: center;
+    color: #333;
+    margin-top: 30px;
+}
+
+.remark {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px auto;
+    width: 80%;
+}
+
+.remark p {
+    font-size: 16px;
+    color: #555;
+}
+
+/* Bouton retour */
+button#back-btn {
+    display: block;
+    margin: 20px auto;
+    background-color: #FF5722; /* Couleur orange */
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button#back-btn:hover {
+    background-color: #e64a19; /* Couleur orange foncé au survol */
+}
+
+/* Boutons généraux (modification des boutons) */
+button {
+    background-color: #4CAF50; /* Couleur verte */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049; /* Couleur survol */
+}

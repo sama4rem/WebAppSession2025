@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programme 2ème BAC - Mathématiques</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".chapter-title").forEach(chapter => {
+                chapter.addEventListener("click", function () {
+                    let chapterId = this.getAttribute("data-chapter-id");
+                    let subchapters = document.getElementById("subchapters-" + chapterId);
+
+                    subchapters.style.display = subchapters.style.display === "block" ? "none" : "block";
+                });
+            });
+
+            // 📌 Sauvegarde de la sélection
+            document.getElementById("save-selections").addEventListener("click", function () {
+                let selectedSubchapters = [];
+                document.querySelectorAll('input[name="subchapters"]:checked').forEach(input => {
+                    selectedSubchapters.push(input.value);
+                });
+
+                fetch("{{ url_for('app_routes.save_programme_selections') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ student_id: {{ student_id }}, selections: selectedSubchapters })
+                }).then(response => {
+                    if (response.ok) {
+                        alert("✅ Sélections sauvegardées avec succès !");
+                        updateBattery();
+                    } else {
+                        alert("❌ Erreur lors de la sauvegarde.");
+                    }
+                }).catch(error => console.error("Erreur:", error));
+            });
+
+            // 🔋 Mise à jour de la batterie (Remplissage de gauche à droite)
+            function updateBattery() {
+                let totalSubchapters = document.querySelectorAll('input[name="subchapters"]').length;
+                let selectedSubchapters = document.querySelectorAll('input[name="subchapters"]:checked').length;
+
+                let percentage = totalSubchapters > 0 ? Math.round((selectedSubchapters / totalSubchapters) * 100) : 0;
+
+                let batteryLevel = document.getElementById("battery-level");
+                let batteryText = document.getElementById("battery-text");
+
+                batteryLevel.style.width = percentage + "%";
+                batteryText.innerText = percentage + "%";
+
+                if (percentage <= 20) {
+                    batteryLevel.style.backgroundColor = "red";
+                } else if (percentage <= 50) {
+                    batteryLevel.style.backgroundColor = "orange";
+                } else {
+                    batteryLevel.style.backgroundColor = "green";
+                }
+            }
+
+            // 🔄 Mise à jour initiale au chargement
+            updateBattery();
+
+            // ⏬ Ajout d'écouteurs pour mise à jour en temps réel
+            document.querySelectorAll('input[name="subchapters"]').forEach(input => {
+                input.addEventListener("change", updateBattery);
+            });
+        });
+    </script>
+    <style>
+        body {
+
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-image: url("{{ url_for('static', filename='backgroundprogramme2bac.jpg') }}");
+            background-repeat: repeat;
+            background-size: cover; /* Adjusts the image to cover the entire page */
+            background-position: center; /* Centers the image */
+
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .back-button {
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100px;
+            font-size: 18px;
+        }
+        .chapters-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+            align-items: start;
+        }
+        .chapter-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .chapter-title {
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #2196F3;
+            color: white;
+            border-radius: 5px;
+            text-align: left;
+            width: 500px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+        }
+        .chapter-title:hover {
+            background-color: #1976D2;
+        }
+        .subchapters {
+            display: none;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 5px;
+            margin-top: 5px;
+            width: 500px;
+            text-align: left;
+            max-width: 100%;
+        }
+        .subchapters label {
+            display: block;
+            padding: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            height: 60px; /* Set the desired height */
+            font-size: 18px; /* Optional: Increase text size for better proportion */
+            padding: 0px 15px;
+            border-radius: 5px;
+            font-size: 20px;
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        /* 🔋 Style de la batterie */
+        .battery-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .battery {
+            width: 420px; /* ✅ Plus long pour un effet visuel agréable */
+            height: 40px;
+            border: 2px solid black;
+            border-radius: 5px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        .battery::after {
+            content: "";
+            width: 10px;
+            height: 20px;
+            background-color: black;
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 2px;
+        }
+        .battery-level {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease-in-out; /* ✅ Animation fluide */
+            background-color: red;
+            position: absolute;
+            left: 0; /* ✅ Remplissage de gauche à droite */
+            top: 0;
+        }
+        .battery-container p {
+            font-weight: bold;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="window.history.back()">🔙 Retour</button>
+            <h1>📚 Programme Maths - 2ème BAC</h1>
+        </div>
+
+        <!-- 🔋 Batterie de progression -->
+        <div class="battery-container">
+            <div class="battery">
+                <div class="battery-level" id="battery-level" style="width: 0%;"></div>
+            </div>
+            <p id="battery-text">0%</p>
+        </div>
+
+        <div class="chapters-container">
+            {% for chapter, subchapters in programme.items() %}
+                <div class="chapter-container">
+                    <div class="chapter-title" data-chapter-id="{{ loop.index }}">
+                        {{ chapter }} ⬇
+                    </div>
+                    <div class="subchapters" id="subchapters-{{ loop.index }}">
+                        {% for subchapter in subchapters %}
+                            <label>
+                                <input type="checkbox" name="subchapters" value="{{ subchapter }}"
+                                    {% if subchapter in selected_chapters %}checked{% endif %}>
+                                {{ subchapter }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <button id="save-selections">💾 Sauvegarder la sélection</button>
+    </div>
+
+</body>
+</html>
