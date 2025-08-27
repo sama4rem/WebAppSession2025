@@ -4,18 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des élèves</title>
-<<<<<<< HEAD
     <style>
         /* Style de base du corps de la page */
-=======
-    <link rel="stylesheet" href="../static/style.css">
-    <style>
->>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
-<<<<<<< HEAD
             min-height: 100vh;
             margin: 0;
             padding: 20px;
@@ -49,27 +43,11 @@
         }
 
         /* Bouton individuel pour un élève */
-=======
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        .student-buttons {
-            margin-bottom: 30px;
-        }
-
->>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
         .student-btn {
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 15px;
-<<<<<<< HEAD
             padding: 12px 20px;
             cursor: pointer;
             font-size: 16px;
@@ -125,19 +103,6 @@
         /* Bouton pour ajouter un élève */
         #add-student-button {
             background-color: #333;
-=======
-            padding: 10px 15px;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .student-btn:hover {
-            background-color: #45a049; /* Un vert un peu plus foncé pour l'effet hover */
-        }
-
-        #add-student-button {
-            background-color: #333; /* Gris foncé */
->>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
             color: white;
             padding: 10px 20px;
             border: none;
@@ -145,7 +110,6 @@
             cursor: pointer;
             font-size: 16px;
         }
-<<<<<<< HEAD
         
         /* Formulaire d'ajout (caché) */
         #add-student-form {
@@ -158,33 +122,11 @@
         }
         #add-student-form button {
             padding: 10px 15px;
-=======
-
-        #add-student-button:hover {
-            background-color: #555; /* Un gris un peu plus clair pour l'effet hover */
-        }
-
-        #add-student-form {
-            margin-top: 20px;
-        }
-
-        #add-student-form input {
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        #add-student-form button {
-            padding: 10px 20px;
->>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-<<<<<<< HEAD
         }
 
         /* Conteneur pour le bouton Archives en bas à gauche */
@@ -211,47 +153,31 @@
             .student-btn {
                 width: 90%;
             }
-=======
-            font-size: 14px;
->>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
         }
     </style>
 </head>
 <body>
     <h1>Gestion des élèves</h1>
 
-<<<<<<< HEAD
-    <!-- Liste des élèves -->
     <div class="student-buttons">
         {% for student in students %}
         <a href="{{ url_for('app_routes.remarks', student_id=student.id) }}">
             <button class="student-btn">
                 
-                <!-- ✅ NOUVEAU BADGE GRIS (à gauche) -->
                 {% if student.recorded_count > 0 %}
                     <span class="recorded-badge">{{ student.recorded_count }}</span> 
                 {% endif %}
 
                 {{ student.name }}
                 
-                <!-- BADGE ROUGE EXISTANT (à droite) -->
                 {% if student.unrecorded_count > 0 %}
                     <span class="notification-badge">{{ student.unrecorded_count }}</span> 
                 {% endif %}
             </button>
-=======
-    <!-- Liste des élèves affichés en haut sous forme de boutons -->
-    <div class="student-buttons">
-        {% for student in students %}
-        <a href="{{ url_for('app_routes.remarks', student_id=student.id) }}">
-            <button class="student-btn">{{ student.name }}</button>
->>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
         </a>
         {% endfor %}
     </div>
 
-<<<<<<< HEAD
-    <!-- Conteneur pour le bouton et le formulaire d'ajout (centré) -->
     <div class="add-student-container">
         <button id="add-student-button" onclick="toggleForm()">➕ Ajouter un élève</button>
         <form id="add-student-form" action="" method="POST" style="display: none;">
@@ -260,20 +186,11 @@
         </form>
     </div>
 
-    <!-- Conteneur pour le bouton "Voir les archives" en bas à gauche -->
     <div class="archives-container">
         <a href="{{ url_for('app_routes.archived_students') }}">
             <button>🗄️ Voir les archives</button>
         </a>
     </div>
-=======
-    <!-- Formulaire pour ajouter un élève -->
-    <button id="add-student-button" onclick="toggleForm()">Ajouter un élève</button>
-    <form id="add-student-form" action="" method="POST" style="display: none;">
-        <input type="text" name="name" placeholder="Nom de l'élève" required>
-        <button type="submit">Ajouter</button>
-    </form>
->>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
 
     <script>
         function toggleForm() {
@@ -282,8 +199,4 @@
         }
     </script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 113f45e4c4adce49a832eacd2d33dc61e112a042
