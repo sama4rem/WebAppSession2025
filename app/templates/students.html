@@ -44,7 +44,7 @@
 
         /* Bouton individuel pour un élève */
         .student-btn {
-            background-color: #4CAF50;
+            /* On retire la couleur de fond fixe pour la rendre dynamique */
             color: white;
             border: none;
             border-radius: 15px;
@@ -54,10 +54,13 @@
             min-width: 150px;
             position: relative;
             box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            /* Ajout d'une transition pour un effet de survol plus doux */
+            transition: filter 0.3s ease;
         }
 
+        /* Effet de survol sur le bouton */
         .student-btn:hover {
-            background-color: #45a049;
+            filter: brightness(0.9); /* Assombrit la couleur actuelle du bouton */
         }
 
         /* Badge de notification (ROUGE, à droite) */
@@ -77,7 +80,7 @@
             border-radius: 50%;
         }
 
-        /* ✅ NOUVEAU STYLE POUR LE BADGE GRIS, à gauche */
+        /* NOUVEAU STYLE POUR LE BADGE GRIS, à gauche */
         .recorded-badge {
             position: absolute;
             top: -8px;
@@ -162,7 +165,7 @@
     <div class="student-buttons">
         {% for student in students %}
         <a href="{{ url_for('app_routes.remarks', student_id=student.id) }}">
-            <button class="student-btn">
+            <button class="student-btn" style="background-color: {{ student.color }};">
                 
                 {% if student.recorded_count > 0 %}
                     <span class="recorded-badge">{{ student.recorded_count }}</span> 

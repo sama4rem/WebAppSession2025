@@ -4,11 +4,36 @@ import os
 import logging
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy.exc import SQLAlchemyError
-from .models import db, Student, Session, ProgrammeSelection  # Import des modèles
+from .models import db, Student, Session, ProgrammeSelection
 from datetime import datetime
-import psycopg2  # Nouvelle importation
+import psycopg2
 
 app_routes = Blueprint('app_routes', __name__)
+
+# --- NOUVELLE PALETTE DE COULEURS POUR LES ANNÉES SCOLAIRES ---
+ACADEMIC_YEAR_COLORS = [
+    "#4CAF50",  # Vert
+    "#2196F3",  # Bleu
+    "#FF9800",  # Orange
+    "#9C27B0",  # Violet
+    "#00BCD4",  # Cyan
+    "#E91E63",  # Rose
+    "#FFEB3B",  # Jaune
+    "#607D8B",  # Gris bleu
+]
+
+def get_academic_year(date):
+    """
+    Calcule l'année scolaire basée sur une date.
+    L'année scolaire commence en septembre.
+    Exemple: une date en 2024-10-15 donne 2024 (pour l'année 2024-2025).
+    Exemple: une date en 2025-03-20 donne 2024 (pour l'année 2024-2025).
+    """
+    year = date.year
+    if date.month >= 9:
+        return year
+    else:
+        return year - 1
 
 # Configuration du logging
 logging.basicConfig(level=logging.DEBUG)
@@ -20,7 +45,6 @@ def ping_database():
     try:
         DATABASE_URL = os.environ.get('DATABASE_URL')
         if not DATABASE_URL:
-            # Gérer le cas où la variable d'environnement n'est pas définie
             return jsonify({"error": "DATABASE_URL non définie"}), 500
         
         conn = psycopg2.connect(DATABASE_URL)
@@ -38,7 +62,7 @@ def ping_database():
 def home():
     return redirect(url_for('app_routes.students'))
 
-# --- MODIFIÉ POUR L'ARCHIVAGE ---
+# --- MODIFIÉ POUR L'ARCHIVAGE ET LA COULEUR DYNAMIQUE ---
 @app_routes.route('/students', methods=['GET', 'POST'])
 def students():
     if request.method == 'POST':
@@ -58,28 +82,38 @@ def students():
 
         return redirect(url_for('app_routes.students'))
 
-    # ✅ MODIFICATION : Ne montrer que les élèves non-archivés
-    students = Student.query.filter_by(is_archived=False).order_by(Student.name).all()
+    students = Student.query.filter_by(is_archived=False).order_by(Student.created_at.asc()).all()
+
+    # Créer une association année scolaire -> couleur
+    year_color_map = {}
+    color_index = 0
 
     for student in students:
+        academic_year = get_academic_year(student.created_at)
+        
+        # Si c'est une nouvelle année scolaire, attribuer une nouvelle couleur
+        if academic_year not in year_color_map:
+            year_color_map[academic_year] = ACADEMIC_YEAR_COLORS[color_index % len(ACADEMIC_YEAR_COLORS)]
+            color_index += 1
+        
+        student.color = year_color_map[academic_year]
+
         student.unrecorded_count = Session.query.filter_by(student_id=student.id, selected=False).count()
         student.recorded_count = Session.query.filter_by(student_id=student.id, selected=True).count()
-    students = Student.query.filter_by(is_archived=False).order_by(Student.created_at.asc()).all()
+    
     return render_template('students.html', students=students)
 
 
-# --- NOUVELLE LOGIQUE D'ARCHIVAGE CI-DESSOUS ---
+# --- LE RESTE DE VOS ROUTES NE CHANGE PAS ---
 
 @app_routes.route('/archived_students')
 def archived_students():
-    """Affiche la liste des élèves archivés."""
     archived = Student.query.filter_by(is_archived=True).order_by(Student.name).all()
     return render_template('archived_students.html', archived_students=archived)
 
 
 @app_routes.route('/archive_student/<int:student_id>', methods=['POST'])
 def archive_student(student_id):
-    """Marque un élève comme archivé."""
     student = db.session.get(Student, student_id)
     if student:
         try:
@@ -96,7 +130,6 @@ def archive_student(student_id):
 
 @app_routes.route('/unarchive_student/<int:student_id>', methods=['POST'])
 def unarchive_student(student_id):
-    """Restaure un élève depuis les archives."""
     student = db.session.get(Student, student_id)
     if student:
         try:
@@ -111,13 +144,9 @@ def unarchive_student(student_id):
     return redirect(url_for('app_routes.archived_students'))
 
 
-# --- LE RESTE DE VOS ROUTES NE CHANGE PAS ---
-
 @app_routes.route('/remarks/<int:student_id>', methods=['GET', 'POST'])
 def remarks(student_id):
-    # J'utilise db.session.get qui est la méthode moderne pour récupérer par clé primaire
-    student = db.session.get(Student, student_id) 
-
+    student = db.session.get(Student, student_id)
     if not student:
         logging.error(f"Élève ID {student_id} introuvable.")
         flash("Élève introuvable.", "error")
@@ -145,7 +174,7 @@ def remarks(student_id):
             try:
                 session.date = datetime.strptime(session.date, "%Y-%m-%d %H:%M:%S").date()
             except ValueError:
-                session.date = datetime.now().date() # Fallback
+                session.date = datetime.now().date()
     
     selected_sessions = {s.id for s in student_sessions if s.selected}
     unrecorded_count = sum(1 for s in student_sessions if not s.selected)
@@ -169,7 +198,6 @@ def delete_student(student_id):
     student = db.session.get(Student, student_id)
     if student:
         try:
-            # La configuration 'cascade' dans le modèle s'occupe de supprimer les sessions et sélections
             db.session.delete(student)
             db.session.commit()
             flash("Élève et données associées supprimés définitivement.", "success")
